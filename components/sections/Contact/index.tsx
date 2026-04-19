@@ -29,7 +29,7 @@ export default function ContactSection() {
                 fontFamily: "var(--font-heading)",
                 fontWeight: 800,
                 color: "#ffffff",
-                fontSize: "clamp(40px, 8vw, 120px)",
+                fontSize: "clamp(40px, 8vw, 150px)",
                 letterSpacing: "0.06em",
                 lineHeight: 1,
               }}
@@ -39,30 +39,34 @@ export default function ContactSection() {
             <Image
               src="/arrow_outward.svg"
               alt="arrow outward"
-              width={40}
-              height={36}
-              style={{ flexShrink: 0 }}
+              width={150}
+              height={150}
+              style={{
+                flexShrink: 0,
+                width: "clamp(40px, 8vw, 120px)",
+                height: "clamp(40px, 8vw, 120px)",
+              }}
             />
           </div>
 
           {/* Right col — email + phone */}
           <div className="flex flex-col gap-2">
             <p
+              className="text-[14px] lg:text-[32px]"
               style={{
                 fontFamily: "var(--font-mono)",
                 color: "rgba(255,255,255,0.7)",
-                fontSize: 14,
-                fontWeight: 300,
+                fontWeight: 400,
               }}
             >
               email: hello@oliverkilby.com
             </p>
             <p
+              className="text-[14px] lg:text-[32px]"
               style={{
                 fontFamily: "var(--font-mono)",
                 color: "rgba(255,255,255,0.7)",
-                fontSize: 14,
-                fontWeight: 300,
+                fontWeight: 400,
               }}
             >
               phone: +1 000 000 0000
@@ -71,12 +75,12 @@ export default function ContactSection() {
         </div>
 
         {/* Sub-row B */}
-        <div>
+        <div className="flex justify-center">
           <p
             style={{
               fontFamily: "var(--font-mono)",
               color: "rgba(255,255,255,0.5)",
-              fontSize: "clamp(13px, 1.5vw, 18px)",
+              fontSize: "clamp(13px, 1.5vw, 24px)",
               fontWeight: 300,
             }}
           >
@@ -86,18 +90,20 @@ export default function ContactSection() {
       </div>
 
       {/* BOTTOM */}
-      <div>
+      <div className="sm:overflow-hidden sm:h-[8vw]">
         <h2
+          className="leading-none sm:whitespace-nowrap"
           style={{
             fontFamily: "var(--font-heading)",
             fontWeight: 800,
             color: "#ffffff",
-            fontSize: "clamp(32px, 8vw, 120px)",
-            letterSpacing: "0.06em",
-            lineHeight: 1,
+            letterSpacing: "0.2em",
+            fontSize: "13vw",
           }}
         >
-          OLIVER KILBY
+          <span className="block sm:inline">OLIVER</span>
+          <span className="hidden sm:inline"> </span>
+          <span className="block sm:inline">KILBY</span>
         </h2>
       </div>
     </section>

@@ -2,15 +2,17 @@
 
 import Image from "next/image";
 import { useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import gsap from "gsap";
 
 export default function LoadingPage() {
   const imageRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (!imageRef.current) return;
 
-    const tl = gsap.timeline();
+    const tl = gsap.timeline({ onComplete: () => router.push("/home") });
 
     // First iteration: fade in + scale
     tl.fromTo(
@@ -30,7 +32,7 @@ export default function LoadingPage() {
     }
 
     return () => { tl.kill(); };
-  }, []);
+  }, [router]);
 
   return (
     <section
