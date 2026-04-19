@@ -44,6 +44,9 @@
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-expo: cubic-bezier(0.7, 0, 0.84, 0);
 
+  /* === Section themes === */
+  --color-section-dark: #222121;
+
   /* === Z-index === */
   --z-canvas: 0;
   --z-content: 10;
