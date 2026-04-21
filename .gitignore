@@ -41,3 +41,4 @@ yarn-error.log*
 next-env.d.ts
 
 AGENT_SETUP_PLAN.md
+WEBGL_IMPLEMENTATION_GUIDE.md

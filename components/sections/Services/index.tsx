@@ -1,13 +1,17 @@
 "use client";
 
 import { useRegisterSection } from "@/hooks/useRegisterSection";
+import { useSectionIndex } from "@/hooks/useSectionIndex";
+import { mergeRefs } from "@/lib/utils/mergeRefs";
+import ModelViewer from "@/components/webgl/ModelViewer";
 
 export default function ServicesSection() {
   const sectionRef = useRegisterSection("002", "services");
+  const sectionIndexRef = useSectionIndex(1);
 
   return (
     <section
-      ref={sectionRef}
+      ref={mergeRefs(sectionRef, sectionIndexRef)}
       className="min-h-screen flex flex-col min-[780px]:flex-row"
       style={{ background: "#ffffff", padding: "3.5rem" }}
     >
@@ -60,11 +64,13 @@ export default function ServicesSection() {
         </div>
       </div>
 
-      {/* Right column — 40% placeholder */}
+      {/* Right column — 40% model viewer */}
       <div
-        className="w-full min-[780px]:w-[40%] bg-gray-200"
+        className="w-full min-[780px]:w-[40%] relative"
         style={{ minHeight: "40vh" }}
-      />
+      >
+        <ModelViewer modelPath="/models/camera_lens.glb" sectionIndex={1} />
+      </div>
     </section>
   );
 }

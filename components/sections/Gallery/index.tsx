@@ -1,13 +1,16 @@
 "use client";
 
 import { useRegisterSection } from "@/hooks/useRegisterSection";
+import { useSectionIndex } from "@/hooks/useSectionIndex";
+import { mergeRefs } from "@/lib/utils/mergeRefs";
 
 export default function GallerySection() {
   const sectionRef = useRegisterSection("003", "gallery", { theme: "dark" });
+  const sectionIndexRef = useSectionIndex(2);
 
   return (
     <section
-      ref={sectionRef}
+      ref={mergeRefs(sectionRef, sectionIndexRef)}
       className="min-h-screen flex flex-col items-center justify-center"
       style={{ background: "var(--color-section-dark)" }}
     >

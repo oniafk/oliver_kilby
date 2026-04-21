@@ -3,9 +3,12 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { useRegisterSection } from "@/hooks/useRegisterSection";
+import { useSectionIndex } from "@/hooks/useSectionIndex";
+import { mergeRefs } from "@/lib/utils/mergeRefs";
 
 export default function AboutSection() {
   const sectionRef = useRegisterSection("001", "about");
+  const sectionIndexRef = useSectionIndex(0);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const line1Ref = useRef<HTMLParagraphElement>(null);
   const line2Ref = useRef<HTMLParagraphElement>(null);
@@ -21,7 +24,7 @@ export default function AboutSection() {
 
   return (
     <section
-      ref={sectionRef}
+      ref={mergeRefs(sectionRef, sectionIndexRef)}
       className="min-h-screen flex flex-col items-center justify-center"
       style={{ background: "#ffffff" }}
     >

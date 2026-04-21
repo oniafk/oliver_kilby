@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import WebGLProvider from "@/components/webgl/WebGLProvider";
 
 export const metadata: Metadata = {
   title: "Oliver Kilby — Photography",
@@ -21,7 +22,11 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {/* Do not move <WebGLProvider> below any route boundary: a re-parent
+            would unmount the canvas and drop the WebGL context. */}
+        <WebGLProvider>{children}</WebGLProvider>
+      </body>
     </html>
   );
 }

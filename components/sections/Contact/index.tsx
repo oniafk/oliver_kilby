@@ -2,16 +2,19 @@
 
 import Image from "next/image";
 import { useRegisterSection } from "@/hooks/useRegisterSection";
+import { useSectionIndex } from "@/hooks/useSectionIndex";
+import { mergeRefs } from "@/lib/utils/mergeRefs";
 
 export default function ContactSection() {
   const sectionRef = useRegisterSection("004", "contact", {
     theme: "dark",
     hideHud: true,
   });
+  const sectionIndexRef = useSectionIndex(3);
 
   return (
     <section
-      ref={sectionRef}
+      ref={mergeRefs(sectionRef, sectionIndexRef)}
       className="min-h-screen flex flex-col justify-between"
       style={{
         background: "var(--color-section-dark)",
