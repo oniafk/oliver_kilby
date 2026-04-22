@@ -35,12 +35,13 @@ export default function WebGLCanvas() {
 
     const w = window.innerWidth;
     const h = window.innerHeight;
+    const dpr = Math.min(window.devicePixelRatio, MAX_DPR);
 
-    // FBO: render model scene into this target
-    const modelRT = new THREE.WebGLRenderTarget(w, h, { depthBuffer: true });
+    // FBO: render model scene into this target — physical pixels to match renderer DPR
+    const modelRT = new THREE.WebGLRenderTarget(w * dpr, h * dpr, { depthBuffer: true });
 
     // Two-pass Gaussian blur
-    const blur = new GaussianBlur(w, h);
+    const blur = new GaussianBlur(w * dpr, h * dpr);
 
     // Composite fullscreen plane in mouseScene
     const compositeGeo = new THREE.PlaneGeometry(2, 2);
@@ -73,12 +74,13 @@ export default function WebGLCanvas() {
       cachedWidth = rw;
       stableW = rw;
       stableH = rh;
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, MAX_DPR));
+      const newDpr = Math.min(window.devicePixelRatio, MAX_DPR);
+      renderer.setPixelRatio(newDpr);
       renderer.setSize(rw, rh);
       camera.aspect = rw / rh;
       camera.updateProjectionMatrix();
-      modelRT.setSize(rw, rh);
-      blur.setSize(rw, rh);
+      modelRT.setSize(rw * newDpr, rh * newDpr);
+      blur.setSize(rw * newDpr, rh * newDpr);
       compositeMat.uniforms.uAspect.value = rw / rh;
     };
     window.addEventListener("resize", handleResize);
