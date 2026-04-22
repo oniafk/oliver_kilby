@@ -25,8 +25,12 @@ export default function ModelViewer({ modelPath, sectionIndex }: ModelViewerProp
     let naturalSize = 0;
     let cancelled = false;
 
+    let stableW = window.innerWidth;
+    let stableH = window.innerHeight;
+    let cachedRect = container.getBoundingClientRect();
+
     const computeModelScale = () => {
-      const frustumW = FRUSTUM_H * (window.innerWidth / window.innerHeight);
+      const frustumW = FRUSTUM_H * (stableW / stableH);
       return (frustumW * MODEL_SCALE_FACTOR) / naturalSize;
     };
 
@@ -59,15 +63,12 @@ export default function ModelViewer({ modelPath, sectionIndex }: ModelViewerProp
 
       // Pre-position before adding to scene — prevents one-frame flash at world origin
       {
-        const w = window.innerWidth;
-        const h = window.innerHeight;
         const halfH = Math.tan((CAMERA_FOV / 2) * (Math.PI / 180)) * CAMERA_Z;
-        const halfW = halfH * (w / h);
-        const sectionScrollCenter = sectionIndex * h;
+        const halfW = halfH * (stableW / stableH);
+        const sectionScrollCenter = sectionIndex * stableH;
         const scrollDelta = window.scrollY - sectionScrollCenter;
-        const normalizedDist = Math.max(-1, Math.min(1, scrollDelta / h));
-        const rect = container.getBoundingClientRect();
-        const ndcX = ((rect.left + rect.width / 2) / w) * 2 - 1;
+        const normalizedDist = Math.max(-1, Math.min(1, scrollDelta / stableH));
+        const ndcX = ((cachedRect.left + cachedRect.width / 2) / stableW) * 2 - 1;
         const targetX = ndcX * halfW;
         const t = (1 - Math.cos(normalizedDist * Math.PI)) / 2;
         const offScreenX = halfW + 1.5;
@@ -82,11 +83,14 @@ export default function ModelViewer({ modelPath, sectionIndex }: ModelViewerProp
       scene.add(model);
     });
 
-    let cachedWidth = window.innerWidth;
+    let cachedWidth = stableW;
     const handleResize = () => {
       const rw = window.innerWidth;
       if (rw <= 1024 && rw === cachedWidth) return;
       cachedWidth = rw;
+      stableW = rw;
+      stableH = window.innerHeight;
+      cachedRect = container.getBoundingClientRect();
       if (model && naturalSize > 0) model.scale.setScalar(computeModelScale());
     };
     window.addEventListener("resize", handleResize);
@@ -94,12 +98,9 @@ export default function ModelViewer({ modelPath, sectionIndex }: ModelViewerProp
     let raf = 0;
     const tick = () => {
       if (model) {
-        const w = window.innerWidth;
-        const h = window.innerHeight;
-
         // frustum half-extents at z=0
         const halfH = Math.tan((CAMERA_FOV / 2) * (Math.PI / 180)) * CAMERA_Z;
-        const halfW = halfH * (w / h);
+        const halfW = halfH * (stableW / stableH);
 
         // Y: section index maps directly to world Y — same formula as camera scroll
         // section i center = -i * OBJECTS_DISTANCE
@@ -107,13 +108,12 @@ export default function ModelViewer({ modelPath, sectionIndex }: ModelViewerProp
 
         // scroll progress: 0 = section centered, ±1 = one viewport away
         // normalized to OBJECTS_DISTANCE range so ±1 = enter/exit threshold
-        const sectionScrollCenter = sectionIndex * h;
+        const sectionScrollCenter = sectionIndex * stableH;
         const scrollDelta = window.scrollY - sectionScrollCenter;
-        const normalizedDist = Math.max(-1, Math.min(1, scrollDelta / h));
+        const normalizedDist = Math.max(-1, Math.min(1, scrollDelta / stableH));
 
         // X target: right column center → NDC → world (DOM-based, stable for y-scroll)
-        const rect = container.getBoundingClientRect();
-        const ndcX = ((rect.left + rect.width / 2) / w) * 2 - 1;
+        const ndcX = ((cachedRect.left + cachedRect.width / 2) / stableW) * 2 - 1;
         const targetX = ndcX * halfW;
 
         // cosine ease: 0 at center → 1 at edges

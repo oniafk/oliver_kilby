@@ -63,12 +63,16 @@ export default function WebGLCanvas() {
     let prevScrollY = window.scrollY;
     let blurSigma = 0.0;
 
-    let cachedWidth = window.innerWidth;
+    let stableW = window.innerWidth;
+    let stableH = window.innerHeight;
+    let cachedWidth = stableW;
     const handleResize = () => {
       const rw = window.innerWidth;
       const rh = window.innerHeight;
       if (rw <= 1024 && rw === cachedWidth) return;
       cachedWidth = rw;
+      stableW = rw;
+      stableH = rh;
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, MAX_DPR));
       renderer.setSize(rw, rh);
       camera.aspect = rw / rh;
@@ -83,20 +87,20 @@ export default function WebGLCanvas() {
     const tick = () => {
       // scroll velocity → blur sigma (decays to 0 at idle, spikes on scroll)
       const scrollDelta =
-        Math.abs(window.scrollY - prevScrollY) / window.innerHeight;
+        Math.abs(window.scrollY - prevScrollY) / stableH;
       prevScrollY = window.scrollY;
       blurSigma = blurSigma * 0.85 + scrollDelta * 15.0;
       blurSigma = Math.max(0.0, Math.min(blurSigma, 8.0));
 
       // camera scroll
       camera.position.y =
-        -(window.scrollY / window.innerHeight) * OBJECTS_DISTANCE;
+        -(window.scrollY / stableH) * OBJECTS_DISTANCE;
 
       compositeMat.uniforms.uCursor.value.set(
         cursorRef.current.x,
         cursorRef.current.y
       );
-      compositeMat.uniforms.uAspect.value = window.innerWidth / window.innerHeight;
+      compositeMat.uniforms.uAspect.value = stableW / stableH;
 
       // render model scene to FBO
       renderer.setRenderTarget(modelRT);
