@@ -82,7 +82,11 @@ export default function ModelViewer({ modelPath, sectionIndex }: ModelViewerProp
       scene.add(model);
     });
 
+    let cachedWidth = window.innerWidth;
     const handleResize = () => {
+      const rw = window.innerWidth;
+      if (rw <= 1024 && rw === cachedWidth) return;
+      cachedWidth = rw;
       if (model && naturalSize > 0) model.scale.setScalar(computeModelScale());
     };
     window.addEventListener("resize", handleResize);

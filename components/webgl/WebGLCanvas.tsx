@@ -11,13 +11,15 @@ import { compositeFrag } from "@/lib/webgl/shaders/composite.frag";
 
 export default function WebGLCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { cursorRef, scene, camera, mouseScene, orthoCam } = useWebGLState();
+  const { cursorRef, scene, camera: _camera, mouseScene, orthoCam } = useWebGLState();
+  const cameraRef = useRef(_camera);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const renderer = getRenderer(canvas);
+    const camera = cameraRef.current;
 
     camera.position.set(0, 0, CAMERA_Z);
     camera.aspect = window.innerWidth / window.innerHeight;
@@ -61,9 +63,12 @@ export default function WebGLCanvas() {
     let prevScrollY = window.scrollY;
     let blurSigma = 0.0;
 
+    let cachedWidth = window.innerWidth;
     const handleResize = () => {
       const rw = window.innerWidth;
       const rh = window.innerHeight;
+      if (rw <= 1024 && rw === cachedWidth) return;
+      cachedWidth = rw;
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, MAX_DPR));
       renderer.setSize(rw, rh);
       camera.aspect = rw / rh;
@@ -121,7 +126,7 @@ export default function WebGLCanvas() {
       modelRT.dispose();
       destroyRenderer();
     };
-  }, [cursorRef, scene, camera, mouseScene, orthoCam]);
+  }, [cursorRef, scene, cameraRef, mouseScene, orthoCam]);
 
   return (
     <canvas
