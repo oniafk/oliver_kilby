@@ -22,6 +22,9 @@ export function useRegisterSection(
     const el = ref.current;
     if (!el) return;
 
+    // For sections taller than the viewport, 0.5 is unreachable — scale down.
+    const threshold = Math.min(0.5, window.innerHeight / el.offsetHeight * 0.5);
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -30,7 +33,7 @@ export function useRegisterSection(
           }
         });
       },
-      { threshold: 0.5 }
+      { threshold }
     );
 
     observer.observe(el);

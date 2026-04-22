@@ -59,7 +59,7 @@ export default function WebGLCanvas() {
 
     // Scroll velocity tracking — plain closure vars, no React refs
     let prevScrollY = window.scrollY;
-    let blurSigma = 1.0;
+    let blurSigma = 0.0;
 
     const handleResize = () => {
       const rw = window.innerWidth;
@@ -76,12 +76,12 @@ export default function WebGLCanvas() {
 
     let rafHandle = 0;
     const tick = () => {
-      // scroll velocity → blur sigma (exponential decay toward base 1.0)
+      // scroll velocity → blur sigma (decays to 0 at idle, spikes on scroll)
       const scrollDelta =
         Math.abs(window.scrollY - prevScrollY) / window.innerHeight;
       prevScrollY = window.scrollY;
-      blurSigma = blurSigma * 0.85 + scrollDelta * 15.0 + 1.0 * 0.15;
-      blurSigma = Math.max(1.0, Math.min(blurSigma, 8.0));
+      blurSigma = blurSigma * 0.85 + scrollDelta * 15.0;
+      blurSigma = Math.max(0.0, Math.min(blurSigma, 8.0));
 
       // camera scroll
       camera.position.y =
@@ -127,7 +127,6 @@ export default function WebGLCanvas() {
     <canvas
       ref={canvasRef}
       className="shader-canvas"
-      style={{ zIndex: 100 }}
     />
   );
 }

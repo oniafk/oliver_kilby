@@ -3,6 +3,7 @@
 import { useRegisterSection } from "@/hooks/useRegisterSection";
 import { useSectionIndex } from "@/hooks/useSectionIndex";
 import { mergeRefs } from "@/lib/utils/mergeRefs";
+import GalleryViewer from "@/components/webgl/GalleryViewer";
 
 export default function GallerySection() {
   const sectionRef = useRegisterSection("003", "gallery", { theme: "dark" });
@@ -11,19 +12,10 @@ export default function GallerySection() {
   return (
     <section
       ref={mergeRefs(sectionRef, sectionIndexRef)}
-      className="min-h-screen flex flex-col items-center justify-center"
+      className="min-h-[800vh]"
       style={{ background: "var(--color-section-dark)" }}
     >
-      <p
-        style={{
-          fontFamily: "var(--font-mono)",
-          color: "rgba(255,255,255,0.3)",
-          fontSize: 14,
-          letterSpacing: "0.1em",
-        }}
-      >
-        gallery — coming soon
-      </p>
+      <GalleryViewer imagePath="/images/image.png" sectionRef={sectionRef} />
     </section>
   );
 }

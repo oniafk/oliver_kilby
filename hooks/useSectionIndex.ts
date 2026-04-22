@@ -20,6 +20,12 @@ export function useSectionIndex(index: number) {
     const el = ref.current;
     if (!el) return;
 
+    // Scale threshold down for sections taller than the viewport.
+    const threshold = Math.min(
+      SECTION_OBSERVER_THRESHOLD,
+      window.innerHeight / el.offsetHeight * SECTION_OBSERVER_THRESHOLD,
+    );
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -28,7 +34,7 @@ export function useSectionIndex(index: number) {
           }
         });
       },
-      { threshold: SECTION_OBSERVER_THRESHOLD }
+      { threshold }
     );
 
     observer.observe(el);
