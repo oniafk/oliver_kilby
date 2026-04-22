@@ -24,6 +24,20 @@ export const MAX_DPR = 2;
 /** IntersectionObserver threshold for section-index tracking. */
 export const SECTION_OBSERVER_THRESHOLD = 0.5;
 
+/**
+ * Visible frustum height (world units) at z=0 with the perspective camera at CAMERA_Z.
+ * Derived from CAMERA_FOV and CAMERA_Z — constant at any aspect ratio.
+ * frustumW = FRUSTUM_H * (innerWidth / innerHeight)
+ */
+export const FRUSTUM_H = 2 * CAMERA_Z * Math.tan((CAMERA_FOV * Math.PI) / 360);
+
+/**
+ * Fraction of visible frustum WIDTH the model occupies.
+ * 0.3 = 30% of visible width. Tune to taste.
+ * Mobile portrait auto-scales correctly — no breakpoints needed.
+ */
+export const MODEL_SCALE_FACTOR = 0.3;
+
 /** POC cube edge length (world units). */
 export const CUBE_SIZE = 0.4;
 

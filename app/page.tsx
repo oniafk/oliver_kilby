@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
+import { preloadGLB } from "@/lib/webgl/preload";
 
 export default function LoadingPage() {
   const imageRef = useRef<HTMLDivElement>(null);
@@ -11,6 +12,8 @@ export default function LoadingPage() {
 
   useEffect(() => {
     if (!imageRef.current) return;
+
+    preloadGLB("/models/camera_lens.glb");
 
     const tl = gsap.timeline({ onComplete: () => router.push("/home") });
 

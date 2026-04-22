@@ -4,7 +4,9 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { useWebGLState } from "@/lib/webgl/WebGLContext";
-import { CAMERA_FOV, CAMERA_Z, OBJECTS_DISTANCE } from "@/lib/webgl/constants";
+import { CAMERA_FOV, CAMERA_Z, FRUSTUM_H, MODEL_SCALE_FACTOR, OBJECTS_DISTANCE } from "@/lib/webgl/constants";
+
+THREE.Cache.enabled = true;
 
 interface ModelViewerProps {
   modelPath: string;
@@ -20,7 +22,13 @@ export default function ModelViewer({ modelPath, sectionIndex }: ModelViewerProp
     if (!container) return;
 
     let model: THREE.Group | null = null;
+    let naturalSize = 0;
     let cancelled = false;
+
+    const computeModelScale = () => {
+      const frustumW = FRUSTUM_H * (window.innerWidth / window.innerHeight);
+      return (frustumW * MODEL_SCALE_FACTOR) / naturalSize;
+    };
 
     const loader = new GLTFLoader();
     loader.load(modelPath, (gltf) => {
@@ -30,9 +38,9 @@ export default function ModelViewer({ modelPath, sectionIndex }: ModelViewerProp
       const box = new THREE.Box3().setFromObject(model);
       const center = box.getCenter(new THREE.Vector3());
       const size = box.getSize(new THREE.Vector3());
-      const maxDim = Math.max(size.x, size.y, size.z);
-      const scale = 1.6 / maxDim;
+      naturalSize = Math.max(size.x, size.y, size.z);
 
+      const scale = computeModelScale();
       model.scale.setScalar(scale);
       model.position.copy(center).multiplyScalar(-scale);
 
@@ -73,6 +81,11 @@ export default function ModelViewer({ modelPath, sectionIndex }: ModelViewerProp
 
       scene.add(model);
     });
+
+    const handleResize = () => {
+      if (model && naturalSize > 0) model.scale.setScalar(computeModelScale());
+    };
+    window.addEventListener("resize", handleResize);
 
     let raf = 0;
     const tick = () => {
@@ -117,6 +130,7 @@ export default function ModelViewer({ modelPath, sectionIndex }: ModelViewerProp
 
     return () => {
       cancelled = true;
+      window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(raf);
       if (model) scene.remove(model);
     };
